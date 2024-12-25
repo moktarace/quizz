@@ -10,7 +10,7 @@ export class VideoService {
 
   // Define duration constant
   QUESTION_DURATION = 5;
-  ANSWER_DURATION = 4;
+  ANSWER_DURATION = 2;
   TRANSITION_DURATION = 1;
   PROGRESS_BAR_HEIGHT = 10;
   PROGRESS_BAR_COLOR = "#4CAF50";
@@ -69,6 +69,24 @@ export class VideoService {
         movie.layers.push(loading);
       }
 
+      //If it's the answer frame, add a success sound
+      if (duration === this.ANSWER_DURATION) {
+        const successSound = new etro.layer.Audio({
+          startTime: startTime,
+          source: "/assets/sounds/bell.wav",
+          volume : 1
+        });
+        movie.layers.push(successSound);
+      } else {
+        const clockSound = new etro.layer.Audio({
+          startTime: startTime,
+          source: "/assets/sounds/clock.mp3",
+          duration : duration,
+          volume : 1
+        });
+        movie.layers.push(clockSound);
+      }
+
       startTime += duration;
       duration = duration === this.QUESTION_DURATION ? 
         this.ANSWER_DURATION 
@@ -78,6 +96,7 @@ export class VideoService {
     return movie
     .record({
       frameRate: 30,
+      type: "video/mp4; codecs=avc1.42E01E"
     })
     .then((blob) => {
       document.body.removeChild(canvas);

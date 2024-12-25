@@ -7,7 +7,7 @@ import { QuizGeneratorComponent } from './app/components/quiz-generator/quiz-gen
   standalone: true,
   imports: [QuizGeneratorComponent],
   template: `
-    <h1>TikTok Quiz Generator</h1>
+    <h1>TikTok Quizz Generator</h1>
     <app-quiz-generator></app-quiz-generator>
   `,
   styles: [`
