@@ -1,4 +1,11 @@
-<div class="container">
+<div *ngIf="isLoading" class="container">
+    <div class="loading">
+        <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+        <p>Génération en cours...</p>
+    </div>
+</div>
+
+<div *ngIf="!isLoading" class="container">
     <div class="input-section">
         <h2>1. Entre un Quizz au format Makdown</h2>
         <p>
@@ -9,6 +16,10 @@
             <textarea row="10" readonly>
 # Quiz Title
 ## Question 1
+- Option 1
+- Option 2
+- *Correct Option
+## Question 2
 - Option 1
 - Option 2
 - *Correct Option
@@ -28,7 +39,7 @@
                 - *Correct Option
                 
                 
-                Je ne veux que le quiz en réponse et en code markdown (pas de mise en page). Chaque question a trois réponses différentes, mais une seule bonne réponse qui n'apparait qu'une fois. Détermine un nombre de questions de sorte que la vidéo ne dépasse pas 50 secondes (5 secondes pour l'affichage de chaque question, 2 secondes pour l'affichage de chaque réponse).  
+                Je ne veux que le quiz en réponse et en code markdown (pas de mise en page). Chaque question a trois réponses différentes, mais une seule bonne réponse qui n'apparait qu'une fois. Détermine un nombre de questions de sorte que la vidéo ne dépasse pas 50 secondes ({{questionDuration}} secondes pour l'affichage de chaque question, {{answerDuration}} secondes pour l'affichage de chaque réponse).  
         </textarea>
             <button (click)="copyToClipboard()">Copier dans le presse-papier</button>
 
@@ -40,22 +51,50 @@
 - Option 1
 - Option 2
 - *Correct Option" rows="10"></textarea>
-        <h2>2. Entre le lien d'une image qui servira de fond</h2>
-        <input type="url" [(ngModel)]="backgroundUrl" />
-        <div class="container">
-            <button (click)="generateQuiz()">3. Générer le Quizz</button>
+        <h2>2. Paramètres supplementaires</h2>
+        <div>
+            <label>Upload d'une image de fond pour les questions:</label>
+            <input type="file" (change)="onFileChange($event)" />
+            <img *ngIf="backgroundUrl" [src]="backgroundUrl" alt="Background" />
+            <p *ngIf="backgroundUrl">Image de fond chargée avec succès</p>
+            <p *ngIf="!backgroundUrl">Aucune image de fond chargée</p>
+            <button (click)="removeBackground()">Supprimer l'image de fond</button>
         </div>
+        <p>
+            <label>La durée d'affichage de chaque question (en secondes):</label>
+            <input type="number" min="1" [(ngModel)]="questionDuration" />
+        </p>
+        <p>
+            <label>La durée d'affichage de chaque réponse (en secondes):</label>
+            <input type="number" min="1" [(ngModel)]="answerDuration" />
+        </p>
+        <p>
+            <!-- Checkbox pour activer ou non les sons dans la video -->
+            <label>
+                <input type="checkbox" [(ngModel)]="enableSound" />
+                Activer le son dans la vidéo
+            </label>
+        </p>
+        <p>
+            <label>
+                <input type="checkbox" [(ngModel)]="highlightQuestion" />
+                Activer un contour autour de la question
+            </label>
+        </p>
+        <h2>3. Générer les images du quizz</h2>
+        <button (click)="generateQuiz()">Générer</button>
     </div>
 
     <div class="preview-section" *ngIf="quiz">
-        <h2>Preview</h2>
+        <h3>Preview</h3>
         <div class="slides-container">
             <ng-container *ngFor="let question of quiz.questions">
-                <app-quiz-slide [question]="question" [backgroundUrl]="backgroundUrl"></app-quiz-slide>
-                <app-quiz-slide [question]="question" [highlightCorrectAnswer]="true"
+                <app-quiz-slide [question]="question" [highlightQuestion]="highlightQuestion" [backgroundUrl]="backgroundUrl"></app-quiz-slide>
+                <app-quiz-slide [question]="question" [highlightQuestion]="highlightQuestion" [highlightCorrectAnswer]="true"
                     [backgroundUrl]="backgroundUrl"></app-quiz-slide>
             </ng-container>
         </div>
-        <button (click)="generateVideo()">4. Générer la video du quizz</button>
+        <h2>4. Générer la video du quizz</h2>
+        <button (click)="generateVideo()">Générer</button>
     </div>
 </div>

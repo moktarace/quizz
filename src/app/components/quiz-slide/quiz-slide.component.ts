@@ -8,7 +8,7 @@ import { QuizQuestion } from '../../models/quiz.model';
   imports: [CommonModule],
   template: `
     <div class="quiz-slide" [style.background-image]="'url(' + backgroundUrl + ')'" >
-      <h2>{{ question.question }}</h2>
+      <h2 [class.highlight-background]="highlightQuestion">{{ question.question }}</h2>
       <div class="options">
         <button
           *ngFor="let option of question.options; let i = index"
@@ -34,6 +34,12 @@ import { QuizQuestion } from '../../models/quiz.model';
       align-items: center;
       justify-content: center;
       aspect-ratio: 9/16;
+      background-color: antiquewhite;
+    }
+
+    .highlight-background {
+      background: black;
+      padding: 5px;
     }
 
     h2 {
@@ -75,5 +81,6 @@ import { QuizQuestion } from '../../models/quiz.model';
 export class QuizSlideComponent {
   @Input() question!: QuizQuestion;
   @Input() highlightCorrectAnswer:boolean = false;
+  @Input() highlightQuestion:boolean = false;
   @Input() backgroundUrl: string = '';
 }

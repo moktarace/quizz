@@ -9,9 +9,6 @@ import etro from "etro";
 export class VideoService {
 
   // Define duration constant
-  QUESTION_DURATION = 5;
-  ANSWER_DURATION = 2;
-  TRANSITION_DURATION = 1;
   PROGRESS_BAR_HEIGHT = 10;
   PROGRESS_BAR_COLOR = "#4CAF50";
   PROGRESS_BAR_SPEED = 0.1;
@@ -28,7 +25,8 @@ export class VideoService {
     });
   }
 
-  async generateVideo(frames: Blob[]) {
+  async generateVideo(frames: Blob[], 
+    questionDuration: number, answerDuration: number, enableSound: boolean): Promise<Blob> {
     // generate a video from the frames with etro
     const canvas = document.createElement("canvas");
     // Set the canvas size to the size of the first frame 
@@ -46,7 +44,7 @@ export class VideoService {
     const movie =  new etro.Movie({canvas});
 
     let startTime = 0;
-    let duration = this.QUESTION_DURATION;
+    let duration = questionDuration;
     
     // Add frames to the video
     for (const frame of frames) {
@@ -69,28 +67,30 @@ export class VideoService {
         movie.layers.push(loading);
       }
 
-      //If it's the answer frame, add a success sound
-      if (duration === this.ANSWER_DURATION) {
-        const successSound = new etro.layer.Audio({
-          startTime: startTime,
-          source: "/assets/sounds/bell.wav",
-          volume : 1
-        });
-        movie.layers.push(successSound);
-      } else {
-        const clockSound = new etro.layer.Audio({
-          startTime: startTime,
-          source: "/assets/sounds/clock.mp3",
-          duration : duration,
-          volume : 1
-        });
-        movie.layers.push(clockSound);
+      if (enableSound) {
+        if (duration === answerDuration) {
+          const successSound = new etro.layer.Audio({
+            startTime: startTime,
+            source: "assets/sounds/bell.wav",
+            duration : duration,
+            volume : 1
+          });
+          movie.layers.push(successSound);
+        } else {
+          const clockSound = new etro.layer.Audio({
+            startTime: startTime,
+            source: "assets/sounds/clock.mp3",
+            duration : duration,
+            volume : 1
+          });
+          movie.layers.push(clockSound);
+        }
       }
 
       startTime += duration;
-      duration = duration === this.QUESTION_DURATION ? 
-        this.ANSWER_DURATION 
-        : this.QUESTION_DURATION;
+      duration = duration === questionDuration ? 
+        answerDuration
+        : questionDuration;
     }
 
     return movie

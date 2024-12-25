@@ -14,14 +14,51 @@ import { Quiz } from '../../models/quiz.model';
   styleUrls: ['./quiz-generator.component.css']
 })
 export class QuizGeneratorComponent {
-  markdownInput = ''
+
+  markdownInput = `# Quiz Title
+## Question 1
+- Option 1
+- Option 2
+- *Correct Option
+## Question 2
+- Option 1
+- Option 2
+- *Correct Option`;
+
   backgroundUrl = '';
+  questionDuration = 6;
+  answerDuration = 2;
+  enableSound = true;
+  highlightQuestion = true;
+  isLoading = false;
+
   quiz: Quiz | null = null;
 
   constructor(
     private markdownService: MarkdownService,
     private videoService: VideoService
   ) {}
+
+  onFileChange(event: Event) {
+    //Upload image file as background with the blob of the image
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      // Check if the file is an image
+      if (typeof reader.result !== 'string') return;
+      // Set the background image to the URL of the uploaded image
+      this.backgroundUrl = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+
+    input.value = '';
+  }
+
+  removeBackground() {
+    this.backgroundUrl = '';
+  }
 
   copyToClipboard() {
     const prompt = document.getElementById('prompt') as HTMLTextAreaElement;
@@ -37,6 +74,7 @@ export class QuizGeneratorComponent {
   async generateVideo() {
     if (!this.quiz) return;
 
+
     const frames: Blob[] = [];
     const slides = document.querySelectorAll('app-quiz-slide');
 
@@ -45,7 +83,9 @@ export class QuizGeneratorComponent {
       frames.push(frame);
     }
 
-    const video = await this.videoService.generateVideo(frames);
+    this.isLoading = true;
+    const video = await this.videoService.generateVideo(frames, this.questionDuration, 
+      this.answerDuration, this.enableSound);
     const url = URL.createObjectURL(video);
     
     // Create download link
@@ -57,5 +97,6 @@ export class QuizGeneratorComponent {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    this.isLoading = false;
   }
 }
