@@ -1,0 +1,61 @@
+<div class="container">
+    <div class="input-section">
+        <h2>1. Entre un Quizz au format Makdown</h2>
+        <p>
+            Entre un quizz au format markdown juste ici. Cela constituera le code de votre quiz.
+            <br />
+            Vous pouvez utiliser le code suivant comme exemple:
+            <br />
+            <textarea row="10" readonly>
+# Quiz Title
+## Question 1
+- Option 1
+- Option 2
+- *Correct Option
+        </textarea>
+            Voici un exemple de code markdown pour un quiz simple. Vous pouvez ajouter autant de questions que vous le
+            souhaitez.
+
+            Voici un exemple de prompt pour générer un quiz:
+            <textarea id="prompt" row="10" readonly>
+                Génère-moi un quizz sur le cinéma de Nolan en respectant ce format Markdown :  
+
+                # Quiz Title
+                
+                ## Question content
+                - Option 1
+                - Option 2
+                - *Correct Option
+                
+                
+                Je ne veux que le quiz en réponse et la bonne réponse n'apparaissent qu'une fois. Détermine un nombre de questions de sorte que la vidéo ne dépasse pas 50 secondes (5 secondes pour l'affichage de chaque question, 4 secondes pour l'affichage de chaque réponse). 
+        </textarea>
+            <button (click)="copyToClipboard()">Copier dans le presse-papier</button>
+
+        </p>
+        <label>Votre quizz:</label>
+        <textarea [(ngModel)]="markdownInput" placeholder="# Quiz Title
+        
+## Question 1
+- Option 1
+- Option 2
+- *Correct Option" rows="10"></textarea>
+        <h2>2. Entre le lien d'une image qui servira de fond</h2>
+        <input type="url" [(ngModel)]="backgroundUrl" />
+        <div class="container">
+            <button (click)="generateQuiz()">3. Générer le Quizz</button>
+        </div>
+    </div>
+
+    <div class="preview-section" *ngIf="quiz">
+        <h2>Preview</h2>
+        <div class="slides-container">
+            <ng-container *ngFor="let question of quiz.questions">
+                <app-quiz-slide [question]="question" [backgroundUrl]="backgroundUrl"></app-quiz-slide>
+                <app-quiz-slide [question]="question" [highlightCorrectAnswer]="true"
+                    [backgroundUrl]="backgroundUrl"></app-quiz-slide>
+            </ng-container>
+        </div>
+        <button (click)="generateVideo()">4. Générer la video du quizz</button>
+    </div>
+</div>

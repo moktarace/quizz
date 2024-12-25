@@ -1,0 +1,46 @@
+.container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .input-section {
+    margin-bottom: 30px;
+  }
+
+  textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
+  button {
+    padding: 10px 20px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background: #0056b3;
+  }
+
+  .slides-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  app-quiz-slide {
+    width: 300px;
+    height: 533px;
+  }
+
+  textarea {
+    resize: none;
+    min-height: 8em;
+    max-height: 10em;
+  }
